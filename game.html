@@ -19,7 +19,7 @@
         function startGame() {
             myGameArea.start();
             myGamePiece = new component(50, 53, "flappy.png", 300, 300, "image");
-			myObstacle = new component(310, 360, "pipe.png", 300, 120, "image");
+			//myObstacle = new component(310, 360, "pipe.png", 300, 120, "image");
 			myBackground = new component(1200, 580, "background.png", 0, 0, "image");
             myScore = new component("30px", "Consolas", "black", 280, 40, "text");
             myGameArea.start();
@@ -57,6 +57,8 @@
             this.height = height;
             this.speedX = 0;
             this.speedY = 0;
+			this.gravity = 0.001;
+			this.gravitySpeed = 0;
             this.x = x;
             this.y = y;
             this.update = function() {
@@ -78,9 +80,17 @@
                 }
             }
             this.newPos = function() {
+				this.gravitySpeed += this.gravity;
                 this.x += this.speedX;
-                this.y += this.speedY;
+                this.y += this.speedY + this.gravitySpeed;
+				this.hitBottom();
             }
+			this.hitBottom = function() {
+				var rockbottom = myGameArea.canvas.height - this.height;
+				if (this.y > rockbottom) {
+					this.y = rockbottom;
+				}
+			}
             this.crashWith = function(otherobj) {
                 var myleft = this.x;
                 var myright = this.x + (this.width);
@@ -110,28 +120,19 @@
             myGameArea.frameNo += 1;
             if (myGameArea.frameNo == 1 || everyinterval(300)) {
                 x = myGameArea.canvas.width;
-                minHeight = 50;
+                minHeight = 55;
                 maxHeight = 138;
                 height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-                minGap = 80;
-                maxGap = 200;
+                minGap = 90;
+                maxGap = 150;
                 gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
                 myObstacles.push(new component(150, height, "pipereverse.png", x, 0,"image"));
                 myObstacles.push(new component(150, x - height - gap, "pipe.png", x, height + gap,"image"));
             }
             myGamePiece.speedX = 0;
             myGamePiece.speedY = 0;
-            if (myGameArea.keys && myGameArea.keys[37]) {
-                myGamePiece.speedX = -1;
-            }
-            if (myGameArea.keys && myGameArea.keys[39]) {
-                myGamePiece.speedX = 1;
-            }
-            if (myGameArea.keys && myGameArea.keys[38]) {
-                myGamePiece.speedY = -1;
-            }
-            if (myGameArea.keys && myGameArea.keys[40]) {
-                myGamePiece.speedY = 1;
+            if (myGameArea.keys && myGameArea.keys[32]) {
+                myGamePiece.speedY = -5;
             }
             for (i = 0; i < myObstacles.length; i += 1) {
                 myObstacles[i].x += -1;
