@@ -16,14 +16,14 @@
         var myGamePiece; //initialize object
         var myObstacles = []; //initialize obstacles
         var myScore; //initialize score
-
         function startGame() {
             myGameArea.start();
-            myGamePiece = new component(30, 50, "mario.gif", 48, 300, "image");
+            myGamePiece = new component(50, 53, "flappy.png", 300, 300, "image");
+			//myObstacle = new component(10, 200, "black", 300, 120);
+			myBackground = new component(1200, 580, "background.png", 0, 0, "image");
             myScore = new component("30px", "Consolas", "black", 280, 40, "text");
             myGameArea.start();
         }
-
         var myGameArea = {
             canvas: document.createElement("canvas"),
             start: function() {
@@ -45,7 +45,6 @@
                 this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
             }
         }
-
         function component(width, height, color, x, y, type) {
             this.type = type;
 				if (type == "image") {
@@ -98,7 +97,6 @@
                 return crash;
             }
         }
-
         function updateGameArea() {
             var x, height, gap, minHeight, maxHeight, minGap, maxGap;
             for (i = 0; i < myObstacles.length; i += 1) {
@@ -107,13 +105,15 @@
                 }
             }
             myGameArea.clear();
+			myBackground.newPos();
+			myBackground.update();
             myGameArea.frameNo += 1;
             if (myGameArea.frameNo == 1 || everyinterval(150)) {
                 x = myGameArea.canvas.width;
                 minHeight = 20;
                 maxHeight = 200;
                 height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-                minGap = 50;
+                minGap = 70;
                 maxGap = 200;
                 gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
                 myObstacles.push(new component(10, height, "green", x, 0));
@@ -142,13 +142,11 @@
             myGamePiece.newPos();
             myGamePiece.update();
         }
-
 		function clearmove() {
-			myGamePiece.image.src = "mario.gif";
+			myGamePiece.image.src = "flappy.png";
 			myGamePiece.speedX = 0; 
 			myGamePiece.speedY = 0; 
 		}
-
         function everyinterval(n) {
             if ((myGameArea.frameNo / n) % 1 == 0) {
                 return true;
