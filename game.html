@@ -19,7 +19,7 @@
         function startGame() {
             myGameArea.start();
             myGamePiece = new component(50, 53, "flappy.png", 300, 300, "image");
-			//myObstacle = new component(10, 200, "black", 300, 120);
+			myObstacle = new component(310, 360, "pipe.png", 300, 120, "image");
 			myBackground = new component(1200, 580, "background.png", 0, 0, "image");
             myScore = new component("30px", "Consolas", "black", 280, 40, "text");
             myGameArea.start();
@@ -108,16 +108,16 @@
 			myBackground.newPos();
 			myBackground.update();
             myGameArea.frameNo += 1;
-            if (myGameArea.frameNo == 1 || everyinterval(150)) {
+            if (myGameArea.frameNo == 1 || everyinterval(300)) {
                 x = myGameArea.canvas.width;
-                minHeight = 20;
-                maxHeight = 200;
+                minHeight = 50;
+                maxHeight = 138;
                 height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-                minGap = 70;
+                minGap = 80;
                 maxGap = 200;
                 gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
-                myObstacles.push(new component(10, height, "green", x, 0));
-                myObstacles.push(new component(10, x - height - gap, "green", x, height + gap));
+                myObstacles.push(new component(150, height, "pipereverse.png", x, 0,"image"));
+                myObstacles.push(new component(150, x - height - gap, "pipe.png", x, height + gap,"image"));
             }
             myGamePiece.speedX = 0;
             myGamePiece.speedY = 0;
@@ -144,6 +144,7 @@
         }
 		function clearmove() {
 			myGamePiece.image.src = "flappy.png";
+			myGamePiece.image.src = "pipe.png"
 			myGamePiece.speedX = 0; 
 			myGamePiece.speedY = 0; 
 		}
