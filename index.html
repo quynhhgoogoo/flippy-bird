@@ -16,12 +16,18 @@
         var myGamePiece; //initialize object
         var myObstacles = []; //initialize obstacles
         var myScore; //initialize score
+        var mySound;
+        var myMusic;
+
         function startGame() {
             myGameArea.start();
-            myGamePiece = new component(50, 53, "flappy.png", 300, 300, "image");
-			//myObstacle = new component(310, 360, "pipe.png", 300, 120, "image");
-			myBackground = new component(1200, 580, "background.png", 0, 0, "image");
+            myGamePiece = new component(50, 53, "img/flappy.png", 300, 300, "image");
+            //myObstacle = new component(310, 360, "pipe.png", 300, 120, "image");
+            myBackground = new component(1200, 580, "img/background.png", 0, 0, "image");
             myScore = new component("30px", "Consolas", "black", 280, 40, "text");
+            mySound = new sound("sound/laugh.mp3");
+            myMusic = new sound("sound/bounce.mp3");
+            myMusic.play();
             myGameArea.start();
         }
         var myGameArea = {
@@ -45,52 +51,51 @@
                 this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
             }
         }
+
         function component(width, height, color, x, y, type) {
             this.type = type;
-				if (type == "image") {
-					this.image = new Image();
-					this.image.src = color;
-				}
+            if (type == "image") {
+                this.image = new Image();
+                this.image.src = color;
+            }
             this.gamearea = myGameArea;
             this.score = 0;
             this.width = width;
             this.height = height;
             this.speedX = 0;
             this.speedY = 0;
-			this.gravity = 0.001;
-			this.gravitySpeed = 0;
+            this.gravity = 0.001;
+            this.gravitySpeed = 0;
             this.x = x;
             this.y = y;
             this.update = function() {
                 ctx = myGameArea.context;
-				if (type == "image") {
-					ctx.drawImage(this.image,
-					this.x,
-					this.y,
-					this.width, this.height);
-				}
-                else if (this.type == "text") {
+                if (type == "image") {
+                    ctx.drawImage(this.image,
+                        this.x,
+                        this.y,
+                        this.width, this.height);
+                } else if (this.type == "text") {
                     ctx.font = this.width + " " + this.height;
                     ctx.fillStyle = color;
                     ctx.fillText(this.text, this.x, this.y);
-                } 
-				else {
+                } else {
                     ctx.fillStyle = color;
                     ctx.fillRect(this.x, this.y, this.width, this.height);
                 }
             }
             this.newPos = function() {
-				this.gravitySpeed += this.gravity;
+                this.gravitySpeed += this.gravity;
                 this.x += this.speedX;
                 this.y += this.speedY + this.gravitySpeed;
-				this.hitBottom();
+                this.hitBottom();
             }
-			this.hitBottom = function() {
-				var rockbottom = myGameArea.canvas.height - this.height;
-				if (this.y > rockbottom) {
-					this.y = rockbottom;
-				}
-			}
+            this.hitBottom = function() {
+                var rockbottom = myGameArea.canvas.height - this.height;
+                if (this.y > rockbottom) {
+                    this.y = rockbottom;
+                }
+            }
             this.crashWith = function(otherobj) {
                 var myleft = this.x;
                 var myright = this.x + (this.width);
@@ -107,16 +112,34 @@
                 return crash;
             }
         }
+
+        function sound(src) {
+            this.sound = document.createElement("audio");
+            this.sound.src = src;
+            this.sound.setAttribute("preload", "auto");
+            this.sound.setAttribute("controls", "none");
+            this.sound.style.display = "none";
+            document.body.appendChild(this.sound);
+            this.play = function() {
+                this.sound.play();
+            }
+            this.stop = function() {
+                this.sound.pause();
+            }
+        }
+
         function updateGameArea() {
             var x, height, gap, minHeight, maxHeight, minGap, maxGap;
             for (i = 0; i < myObstacles.length; i += 1) {
                 if (myGamePiece.crashWith(myObstacles[i])) {
+                    mySound.play();
+                    myGameArea.stop();
                     return;
                 }
             }
             myGameArea.clear();
-			myBackground.newPos();
-			myBackground.update();
+            myBackground.newPos();
+            myBackground.update();
             myGameArea.frameNo += 1;
             if (myGameArea.frameNo == 1 || everyinterval(300)) {
                 x = myGameArea.canvas.width;
@@ -126,8 +149,8 @@
                 minGap = 90;
                 maxGap = 150;
                 gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
-                myObstacles.push(new component(150, height, "pipereverse.png", x, 0,"image"));
-                myObstacles.push(new component(150, x - height - gap, "pipe.png", x, height + gap,"image"));
+                myObstacles.push(new component(150, height, "img/pipereverse.png", x, 0, "image"));
+                myObstacles.push(new component(150, x - height - gap, "img/pipe.png", x, height + gap, "image"));
             }
             myGamePiece.speedX = 0;
             myGamePiece.speedY = 0;
@@ -143,19 +166,20 @@
             myGamePiece.newPos();
             myGamePiece.update();
         }
-		function clearmove() {
-			myGamePiece.image.src = "flappy.png";
-			myGamePiece.image.src = "pipe.png"
-			myGamePiece.speedX = 0; 
-			myGamePiece.speedY = 0; 
-		}
+
+        function clearmove() {
+            myGamePiece.image.src = "img/flappy.png";
+            myGamePiece.image.src = "img/pipe.png"
+            myGamePiece.speedX = 0;
+            myGamePiece.speedY = 0;
+        }
+
         function everyinterval(n) {
             if ((myGameArea.frameNo / n) % 1 == 0) {
                 return true;
             }
             return false;
         }
-		
     </script>
 </body>
 
