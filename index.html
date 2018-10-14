@@ -5,13 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
         canvas {
+			position: fixed;
+			width: 100%;
+			padding-bottom: 22%;
             border: 1px solid #d3d3d3;
             background-color: #f1f1f1;
         }
+		
+		body {
+			margin: 0 0;
+		}
+		
+		button {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translateY(-50%); 
+			transform: translateX(-50%); 
+			font-size: 32px;
+			display: none;
+		}
     </style>
 </head>
 
 <body onload="startGame()">
+	<canvas id="myCanvas"></canvas>
+	<button onClick="refreshPage()" id="playAgain">Play again</button>
     <script>
         var myGamePiece; //initialize object
         var myObstacles = []; //initialize obstacles
@@ -31,7 +50,7 @@
             myGameArea.start();
         }
         var myGameArea = {
-            canvas: document.createElement("canvas"),
+            canvas: document.getElementById("myCanvas"),
             start: function() {
                 this.canvas.width = 1200;
                 this.canvas.height = 580;
@@ -132,6 +151,7 @@
             var x, height, gap, minHeight, maxHeight, minGap, maxGap;
             for (i = 0; i < myObstacles.length; i += 1) {
                 if (myGamePiece.crashWith(myObstacles[i])) {
+					document.getElementById("playAgain").style.display = "block";
                     mySound.play();
                     myGameArea.stop();
                     return;
@@ -185,6 +205,4 @@
 		}
     </script>
 </body>
-<br><br>
-<button type="submit"  onClick="refreshPage()">Play again</button>
 </html>
